@@ -1,0 +1,94 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<IsPackable>true</IsPackable>
+
+		<AssemblyName>Koala.Microsoft.AspNetCore</AssemblyName>
+		<RootNamespace>Microsoft.AspNetCore</RootNamespace>
+
+		<VersionSuffix>$([System.Convert]::ToUInt16($([MSBuild]::Divide($([System.DateTime]::Now.ToString(yy)), 10)))).$([System.Convert]::ToUInt16($([MSBuild]::Modulo($([System.DateTime]::Now.ToString(yy)), 10)))).$([System.DateTime]::Now.ToString(MM)).$([System.DateTime]::Now.ToString(ddHH))</VersionSuffix>
+		<AssemblyVersion Condition=" '$(Configuration)' == 'Debug' ">1.0.0.0</AssemblyVersion>
+		<AssemblyVersion Condition=" '$(Configuration)' != 'Debug' ">$(VersionSuffix)</AssemblyVersion>
+		<Version Condition=" '$(Configuration)' == 'Debug' ">1.0.0.0</Version>
+		<Version Condition=" '$(Configuration)' != 'Debug' ">$(VersionSuffix)</Version>
+		<FileVersion Condition=" '$(Configuration)' == 'Debug' ">1.0.0.0</FileVersion>
+		<FileVersion Condition=" '$(Configuration)' != 'Debug' ">$(VersionSuffix)</FileVersion>
+		<RunPostBuildEvent>Always</RunPostBuildEvent>
+		
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<PackageIcon>koala-logo-350px.png</PackageIcon>
+		<Copyright>Copyright © 2022-32</Copyright>
+		<PackageProjectUrl>https://github.com/gmpatel/Koala.AspNetCore</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/gmpatel/Koala.AspNetCore</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>AspNetCore Bootstrap Easy Setup Swagger OpenApi Everything Ready</PackageTags>
+		<NeutralLanguage>en</NeutralLanguage>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Description>Koala.AspNetCore is a library contains extensions to easy setup AspNetCore projects with basic required services already integrated</Description>
+		<Authors>Patel Gunjan [GP], $(AssemblyName)</Authors>
+		<Company>Patel Gunjan [GP], $(AssemblyName)</Company>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Koala.Newtonsoft.Json" Version="1.0.2" />
+
+		<PackageReference Include="Microsoft.AspNetCore.Rewrite" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="6.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="6.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="6.0.3" />
+
+		<PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="6.4.5" />
+		<PackageReference Include="StackExchange.Redis.Extensions.Core" Version="6.4.5" />
+		<PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="6.4.5" />
+
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Scrutor" Version="4.1.0" />
+
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.18" />
+
+		<PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3" />
+
+
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.3" />
+
+		<PackageReference Include="Quartz" Version="3.4.0" />
+
+		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="6.0.0-dev-00265" />
+		<PackageReference Include="Serilog.ThrowContext" Version="0.1.2" />
+
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.3.0" />
+	</ItemGroup>
+
+	
+	<ItemGroup>
+		<None Include="../../koala-logo-350px.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="../../README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+</Project>
