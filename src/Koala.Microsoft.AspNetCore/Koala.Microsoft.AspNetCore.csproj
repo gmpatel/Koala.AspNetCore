@@ -33,20 +33,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Koala.Newtonsoft.Json" Version="1.0.7" />
+		<PackageReference Include="Koala.Newtonsoft.Json" Version="1.0.10" />
 
 		<PackageReference Include="Microsoft.AspNetCore.Rewrite" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="7.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="7.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="6.0.14" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.3" />
 
 		<PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="9.1.0" />
 		<PackageReference Include="StackExchange.Redis.Extensions.Core" Version="9.1.0" />
 		<PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="9.1.0" />
-
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-		<PackageReference Include="Scrutor" Version="4.2.1" />
 
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
@@ -57,8 +55,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.3" />
-
+		
 		<PackageReference Include="Quartz" Version="3.6.2" />
 
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
