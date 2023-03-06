@@ -7,21 +7,48 @@ namespace Microsoft.AspNetCore.Filters
 {
     public class ActionHidingConvention : IActionModelConvention
     {
-        public static bool? HiddenControllersOverride { get; set; }
-
-        public static List<string> HiddenControllerNames = new List<string>
+        public static readonly List<string> SystemAlwaysHiddenControllerNames = new List<string>
         {
-            "XHealth", "XInfo", "XSwitch", "XTroubleshoot"
+            "XError", "XHealth", "XInfo", "XRedirect", "XSwitch", "XTroubleshoot"
+        };
+
+        public static readonly List<string> AlwaysHiddenControllerNames = new List<string>
+        {
+            "Health"
+        };
+
+        public static readonly List<string> ReleaseBuildHiddenControllerNames = new List<string>
+        {
+            "TeamTools"
+        };
+
+        public static readonly List<string> HiddenControllerNames = new List<string>
+        {
+            "Helper", "Info", "Switch", "Troubleshoot"
         };
 
         public void Apply(ActionModel action)
         {
-            if (HiddenControllersOverride ?? (string.IsNullOrWhiteSpace(EnvVarNames.SHOW_FULL_SWAGGER.GetEnvVarValue()) && new {}.IsReleaseMode()))
+            if (SystemAlwaysHiddenControllerNames.Contains(action.Controller.ControllerName))
             {
-                if (HiddenControllerNames.Contains(action.Controller.ControllerName))
-                {
-                    action.ApiExplorer.IsVisible = false;
-                }
+                action.ApiExplorer.IsVisible = false;
+            }
+
+            if (AlwaysHiddenControllerNames.Contains(action.Controller.ControllerName))
+            {
+                action.ApiExplorer.IsVisible = false;
+            }
+
+            var showFullSwagger = !string.IsNullOrWhiteSpace(EnvVarNames.SHOW_FULL_SWAGGER.GetEnvVarValue());
+
+            if (showFullSwagger == false && this.IsReleaseMode() && ReleaseBuildHiddenControllerNames.Contains(action.Controller.ControllerName))
+            {
+                action.ApiExplorer.IsVisible = false;
+            }
+
+            if (showFullSwagger == false && HiddenControllerNames.Contains(action.Controller.ControllerName))
+            {
+                action.ApiExplorer.IsVisible = false;
             }
         }
     }

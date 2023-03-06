@@ -22,7 +22,6 @@ using Newtonsoft.Json;
 using Koala.Core;
 using Microsoft.AspNetCore.Exceptions;
 using System.Net;
-using System.Resources;
 
 namespace Microsoft.AspNetCore.Extensions
 {
@@ -44,6 +43,85 @@ namespace Microsoft.AspNetCore.Extensions
             "https://localhost",
             "http://localhost"
         };
+
+        public static IHostBuilder GetHostBuilder<TStartup>(this ApplicationConfiguration appConfiguration, out ILogger logger, out LoggingLevelSwitch loggingLevelSwitch, out IConfiguration configuration) where TStartup : AbstractStartup
+        {
+            AbstractStartup.AppConfiguration = appConfiguration;
+
+            AspNetCoreExtensions.SwaggerPageTitle = !string.IsNullOrWhiteSpace(appConfiguration.AppTag)
+                ? @$"{appConfiguration.AppTitle} - {appConfiguration.AppTag}"
+                : @$"{appConfiguration.AppTitle}";
+
+            AspNetCoreExtensions.SwaggerPageDescription = appConfiguration.AppDescription;
+
+            if (appConfiguration.AppAllowedOrigins != null && appConfiguration.AppAllowedOrigins.Length > 0)
+            {
+                AspNetCoreExtensions.AllowedOrigins = appConfiguration.AppAllowedOrigins;
+            }
+
+            foreach (var exceptHiddenControllerName in appConfiguration.AppExceptHiddenControllerNames ?? new List<string>())
+            {
+                if (exceptHiddenControllerName.Equals("*"))
+                {
+                    ActionHidingConvention.SystemAlwaysHiddenControllerNames.Clear();
+                    ActionHidingConvention.AlwaysHiddenControllerNames.Clear();
+                    ActionHidingConvention.ReleaseBuildHiddenControllerNames.Clear();
+                    ActionHidingConvention.HiddenControllerNames.Clear();
+                }
+                else
+                {
+                    ActionHidingConvention.SystemAlwaysHiddenControllerNames.RemoveAll(n => n.Equals(exceptHiddenControllerName, StringComparison.InvariantCultureIgnoreCase));
+                    ActionHidingConvention.AlwaysHiddenControllerNames.RemoveAll(n => n.Equals(exceptHiddenControllerName, StringComparison.InvariantCultureIgnoreCase));
+                    ActionHidingConvention.ReleaseBuildHiddenControllerNames.RemoveAll(n => n.Equals(exceptHiddenControllerName, StringComparison.InvariantCultureIgnoreCase));
+                    ActionHidingConvention.HiddenControllerNames.RemoveAll(n => n.Equals(exceptHiddenControllerName, StringComparison.InvariantCultureIgnoreCase));
+                }
+            }
+
+            foreach (var alwaysHiddenControllerName in appConfiguration.AppAppendAlwaysHiddenControllerNames ?? new List<string>())
+            {
+                ActionHidingConvention.AlwaysHiddenControllerNames.Add(alwaysHiddenControllerName);
+            }
+
+            foreach (var releaseBuildHiddenControllerName in appConfiguration.AppAppendReleaseBuildHiddenControllerNames ?? new List<string>())
+            {
+                ActionHidingConvention.ReleaseBuildHiddenControllerNames.Add(releaseBuildHiddenControllerName);
+            }
+
+            foreach (var hiddenControllerName in appConfiguration.AppAppendHiddenControllerNames ?? new List<string>())
+            {
+                ActionHidingConvention.HiddenControllerNames.Add(hiddenControllerName);
+            }
+
+            foreach (var exceptExemptedRequestAuthorizationPath in appConfiguration.AppExceptExemptedRequestAuthorizationPaths ?? new List<string>())
+            {
+                if (exceptExemptedRequestAuthorizationPath.Equals("*"))
+                {
+                    MiddlewareConstants.ExemptedPathsFromRequestAuthorization.Clear();
+                }
+                else
+                {
+                    MiddlewareConstants.ExemptedPathsFromRequestAuthorization.RemoveAll(n => n.Contains(exceptExemptedRequestAuthorizationPath, StringComparison.InvariantCultureIgnoreCase));
+                }
+            }
+
+            foreach (var exemptedRequestAuthorizationPath in appConfiguration.AppAppendExemptedRequestAuthorizationPaths ?? new List<string>())
+            {
+                MiddlewareConstants.ExemptedPathsFromRequestAuthorization.Add(exemptedRequestAuthorizationPath);
+            }
+
+            RequestHeadersRequireSwaggerFilter.HeaderXIdEnabled = appConfiguration.HeaderXIdEnabled ?? true;
+            RequestHeadersRequireSwaggerFilter.HeaderAccessTokenHeaderEnabled = appConfiguration.HeaderAccessTokenHeaderEnabled ?? true;
+            RequestHeadersRequireSwaggerFilter.HeaderAsCountryCodeEnabled = appConfiguration.HeaderAsCountryCodeEnabled ?? false;
+            RequestHeadersRequireSwaggerFilter.HeadersCustom = appConfiguration.HeadersCustom;
+
+            MiddlewareConstants.ForceGarbageCollectBeforeEveryApiCall = appConfiguration.ForceGarbageCollectBeforeEveryApiCall;
+            MiddlewareConstants.ForceGarbageCollectAfterEveryApiCall = appConfiguration.ForceGarbageCollectAfterEveryApiCall;
+
+            MiddlewareConstants.LogApiCallExecuting = appConfiguration.LogApiCallExecuting;
+            MiddlewareConstants.LogApiCallExecuted = appConfiguration.LogApiCallExecuted;
+
+            return appConfiguration.AppIdentifier.GetHostBuilder<TStartup>(appConfiguration.AppPort, appConfiguration.AppArgs, out logger, out loggingLevelSwitch, out configuration);
+        }
 
         public static IHostBuilder GetHostBuilder<TStartup>(this Guid appGuid, int port, string[] args, out ILogger logger, out LoggingLevelSwitch loggingLevelSwitch, out IConfiguration configuration) where TStartup : AbstractStartup
         {
