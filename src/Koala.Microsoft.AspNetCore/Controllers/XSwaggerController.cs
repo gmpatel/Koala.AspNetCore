@@ -11,13 +11,6 @@ namespace Microsoft.AspNetCore.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class XSwaggerController : ControllerBase
     {
-        private readonly Func<string, HttpClient> httpClientResolver;
-
-        public XSwaggerController(Func<string, HttpClient> httpClientResolver)
-        {
-            this.httpClientResolver = httpClientResolver;
-        }
-
         [HttpGet, Route("/Swagger")]
         public async Task<RedirectResult> RedirectToSwaggerIndex()
         {
@@ -43,20 +36,7 @@ namespace Microsoft.AspNetCore.Controllers
 
             return result;
         }
-
-        [HttpGet("/Swagger/Service/Client")]
-        public IActionResult GetForPropBackendKeyAsync([FromQuery] string specialToken = default, [FromQuery] string type = default, [FromQuery] bool? compact = default)
-        {
-            specialToken.ValidateSpecialToken(true);
-
-            var httpClient = httpClientResolver?.Invoke(type);
-
-            return Content(
-                httpClient.Json(compact: (compact ?? false)),
-                SetConstants.ContentTypeHeaderValueJson
-            );
-        }
-
+        
         [HttpGet("/Swagger/SpecialToken")]
         public IActionResult GetProdToken([FromQuery] string accessToken = default)
         {
