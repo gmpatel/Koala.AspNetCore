@@ -54,5 +54,7 @@
 
         public const string LogConsoleLogsOutputTemplate = "{NewLine}[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}Properties: {Properties}{NewLine}{Exception}";
         public const string LogDebugLogsOutputTemplate = "{NewLine}[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}Properties: {Properties}{NewLine}{Exception}";
+        
+        public const string ExceptionMessageSpecialTokenUnauthorized = "Unauthorized to access the resource! Please provide required access information.";
     }
 }

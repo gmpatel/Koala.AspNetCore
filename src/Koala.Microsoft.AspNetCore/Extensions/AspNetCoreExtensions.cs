@@ -20,6 +20,9 @@ using StackExchange.Redis;
 using Swashbuckle.AspNetCore.Filters;
 using Newtonsoft.Json;
 using Koala.Core;
+using Microsoft.AspNetCore.Exceptions;
+using System.Net;
+using System.Resources;
 
 namespace Microsoft.AspNetCore.Extensions
 {
@@ -304,6 +307,20 @@ namespace Microsoft.AspNetCore.Extensions
                     .Build();
 
             return configuration;
+        }
+
+        public static readonly string SpecialToken = string.Empty.GenerateRandom(36);
+
+        public static bool ValidateSpecialToken(this string specialToken, bool? throwOnFailure = default)
+        {
+            var result = $"{specialToken}".Equals(SpecialToken, StringComparison.InvariantCulture) || $"{specialToken}".Equals(Properties.Resources.AccessToken, StringComparison.InvariantCulture);
+
+            if ((throwOnFailure ?? true) && !result)
+            {
+                throw new HttpStatusException(HttpStatusCode.Unauthorized, SetConstants.ExceptionMessageSpecialTokenUnauthorized);
+            }
+
+            return result;
         }
     }
 }

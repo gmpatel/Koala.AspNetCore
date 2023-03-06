@@ -1,0 +1,52 @@
+name: 'Publish NuGet'
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+env:
+  SOLUTION_PATH: './Koala.Serialization.sln'
+  OUTPUT_DIR_PATH: './packages'
+  NUGET_SOURCE: 'https://api.nuget.org/v3/index.json'
+  
+jobs:
+  build-pack-publish:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 'Start'
+      uses: actions/checkout@v3
+
+    - name: 'Setup .Net'
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: 'Restore Dependencies'
+      run: dotnet restore
+
+    - name: 'Build Solution'
+      run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
+
+    - name: 'Run UnitTests'
+      run: dotnet test ${{ env.SOLUTION_PATH }} --configuration Release --no-restore --no-build
+
+    - name: 'Get Version'
+      id: version
+      uses: battila7/get-version-action@v2
+
+    - name: 'Print Version'
+      run: echo steps.version.outputs.version-without-v
+
+    - name: 'Pack'
+      run: dotnet pack ${{ env.SOLUTION_PATH }} --configuration Release --no-restore --no-build --include-symbols --output ${{ env.OUTPUT_DIR_PATH }} -p:PackageVersion=${{ steps.version.outputs.version-without-v }}
+    
+    - name: 'List Packages'
+      run: ls ./packages
+    - name: Check NuGet Version
+      run: dotnet nuget --version
+    
+    - name: 'Push NuGet'
+      run: dotnet nuget push ${{ env.OUTPUT_DIR_PATH }}/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ env.NUGET_SOURCE }} --skip-duplicate

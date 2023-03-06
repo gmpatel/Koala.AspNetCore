@@ -6,14 +6,17 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67A2C560-BBA9-4995-B8F9-28124405D592}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.github\workflows\build.yml = .github\workflows\build.yml
 		koala-logo-350px.png = koala-logo-350px.png
 		Koala.AspNetCore.sln.DotSettings = Koala.AspNetCore.sln.DotSettings
+		Koala.AspNetCore.snk = Koala.AspNetCore.snk
+		.github\workflows\publish.yml = .github\workflows\publish.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Koala.Microsoft.AspNetCore", "src\Koala.Microsoft.AspNetCore\Koala.Microsoft.AspNetCore.csproj", "{D28BD3F5-40B8-4531-B260-14B9D2059D4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "src\UnitTests\UnitTests.csproj", "{A169E12E-576B-4954-AF7F-82502E8F0299}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "src\UnitTests\UnitTests.csproj", "{A169E12E-576B-4954-AF7F-82502E8F0299}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

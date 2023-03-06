@@ -33,50 +33,50 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Koala.Newtonsoft.Json" Version="1.0.2" />
+		<PackageReference Include="Koala.Newtonsoft.Json" Version="1.0.7" />
 
 		<PackageReference Include="Microsoft.AspNetCore.Rewrite" Version="2.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.3" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="6.0.3" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="6.0.3" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="6.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="7.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="7.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="6.0.14" />
 
-		<PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="6.4.5" />
-		<PackageReference Include="StackExchange.Redis.Extensions.Core" Version="6.4.5" />
-		<PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="6.4.5" />
+		<PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="9.1.0" />
+		<PackageReference Include="StackExchange.Redis.Extensions.Core" Version="9.1.0" />
+		<PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="9.1.0" />
 
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-		<PackageReference Include="Scrutor" Version="4.1.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+		<PackageReference Include="Scrutor" Version="4.2.1" />
 
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.3" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.18" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
 
 		<PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3" />
-
-
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.14" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.3" />
 
-		<PackageReference Include="Quartz" Version="3.4.0" />
+		<PackageReference Include="Quartz" Version="3.6.2" />
 
-		<PackageReference Include="Serilog" Version="2.10.0" />
-		<PackageReference Include="Serilog.AspNetCore" Version="6.0.0-dev-00265" />
+		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
 		<PackageReference Include="Serilog.ThrowContext" Version="0.1.2" />
 
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.3.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
 	</ItemGroup>
 
-	
+
+	<PropertyGroup>
+		<PackageReleaseNotes></PackageReleaseNotes>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\..\Koala.AspNetCore.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<None Include="../../koala-logo-350px.png">
 			<Pack>True</Pack>
@@ -89,6 +89,21 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

@@ -4,6 +4,7 @@ using System.Net.Mime;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using Koala.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Constants;
 using Microsoft.Extensions.Logging;
