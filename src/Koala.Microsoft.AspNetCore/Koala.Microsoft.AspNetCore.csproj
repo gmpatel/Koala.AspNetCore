@@ -40,7 +40,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="7.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="7.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="6.0.14" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.3" />
 
 		<PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="9.1.0" />
 		<PackageReference Include="StackExchange.Redis.Extensions.Core" Version="9.1.0" />
