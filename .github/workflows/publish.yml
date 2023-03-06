@@ -6,7 +6,7 @@ on:
     - 'v*'
 
 env:
-  SOLUTION_PATH: './Koala.Serialization.sln'
+  SOLUTION_PATH: './Koala.AspNetCore.sln'
   OUTPUT_DIR_PATH: './packages'
   NUGET_SOURCE: 'https://api.nuget.org/v3/index.json'
   
