@@ -31,6 +31,8 @@ namespace Microsoft.AspNetCore.Extensions
 
         public static string SwaggerPageDescription { get; set; }
 
+        public static IList<IList<string>> SwaggerDocsGroups { get; set; } = new List<IList<string>> { new List<string> {"Default"} };
+
         public static string CorsPolicyName { get; set; } = "ArchiSharpAspNetCorsPolicy";
 
         public static string RedisConnectionStringName { get; set; } = "RedisInstance";
@@ -57,6 +59,11 @@ namespace Microsoft.AspNetCore.Extensions
             if (appConfiguration.AppAllowedOrigins != null && appConfiguration.AppAllowedOrigins.Length > 0)
             {
                 AspNetCoreExtensions.AllowedOrigins = appConfiguration.AppAllowedOrigins;
+            }
+
+            if (appConfiguration.AppApiPageGroups != null && appConfiguration.AppApiPageGroups.Any())
+            {
+                AspNetCoreExtensions.SwaggerDocsGroups = appConfiguration.AppApiPageGroups;
             }
 
             foreach (var exceptHiddenControllerName in appConfiguration.AppExceptHiddenControllerNames ?? new List<string>())
@@ -253,19 +260,41 @@ namespace Microsoft.AspNetCore.Extensions
                     var xmlFile = $"{Assembly.GetEntryAssembly()?.GetName().Name}.xml";
                     var xmlFilePath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-                    c.SwaggerDoc(SetConstants.ApiPageV1Version, new OpenApiInfo
+                    foreach (var swaggerDocsGroup in SwaggerDocsGroups)
                     {
-                        Version = services.GetVersion(),
-                        Title = SwaggerPageTitle ?? SetConstants.ApiPageV1Title,
-                        Description = $"v{new{}.GetVersion()}<br><br>{SwaggerPageDescription ?? SetConstants.ApiPageV1Description}<br><br>{new {}.GetContainerIPsString()}<br>{new {}.GetHostNamesString()}",
-                        TermsOfService = new Uri(SetConstants.ApiPageTermsLink),
-                        Contact = new OpenApiContact
+                        var groupName = swaggerDocsGroup.FirstOrDefault();
+
+                        if (string.IsNullOrWhiteSpace(groupName))
+                            throw new InvalidDataException("Provided SwaggerDocsGroup configuration is invalid");
+
+                        c.SwaggerDoc(groupName, new OpenApiInfo
                         {
-                            Name = SetConstants.ApiPageContactName,
-                            Url = new Uri(SetConstants.ApiPageContactUrl),
-                            Email = SetConstants.ApiPageContactEmail
-                        }
-                    });
+                            Version = services.GetVersion(),
+                            Title = SwaggerPageTitle ?? groupName,
+                            Description = $"v{new { }.GetVersion()}<br><br>{SwaggerPageDescription ?? SetConstants.ApiPageV1Description}<br><br>{new { }.GetContainerIPsString()}<br>{new { }.GetHostNamesString()}",
+                            TermsOfService = new Uri(SetConstants.ApiPageTermsLink),
+                            Contact = new OpenApiContact
+                            {
+                                Name = SetConstants.ApiPageContactName,
+                                Url = new Uri(SetConstants.ApiPageContactUrl),
+                                Email = SetConstants.ApiPageContactEmail
+                            }
+                        });
+                    }
+
+                    //c.SwaggerDoc(SetConstants.ApiPageV1Version, new OpenApiInfo
+                    //{
+                    //    Version = services.GetVersion(),
+                    //    Title = SwaggerPageTitle ?? SetConstants.ApiPageV1Title,
+                    //    Description = $"v{new{}.GetVersion()}<br><br>{SwaggerPageDescription ?? SetConstants.ApiPageV1Description}<br><br>{new {}.GetContainerIPsString()}<br>{new {}.GetHostNamesString()}",
+                    //    TermsOfService = new Uri(SetConstants.ApiPageTermsLink),
+                    //    Contact = new OpenApiContact
+                    //    {
+                    //        Name = SetConstants.ApiPageContactName,
+                    //        Url = new Uri(SetConstants.ApiPageContactUrl),
+                    //        Email = SetConstants.ApiPageContactEmail
+                    //    }
+                    //});
 
                     c.ExampleFilters();
 
@@ -331,8 +360,16 @@ namespace Microsoft.AspNetCore.Extensions
             {
                 try
                 {
-                    c.SwaggerEndpoint(SetConstants.ApiPageV1JsonPath, SetConstants.ApiPageV1Version);
-                    c.RoutePrefix = SetConstants.ApiPageUrlPrefix;
+                    foreach (var swaggerDocsGroup in SwaggerDocsGroups)
+                    {
+                        var groupName = swaggerDocsGroup.FirstOrDefault();
+
+                        if (string.IsNullOrWhiteSpace(groupName))
+                            throw new InvalidDataException("Provided SwaggerDocsGroup configuration is invalid");
+
+                        c.SwaggerEndpoint($"{groupName}/{SetConstants.ApiPageUrlPrefix}.json", groupName);
+                        c.RoutePrefix = SetConstants.ApiPageUrlPrefix;
+                    }
                 }
                 catch (Exception ex)
                 {

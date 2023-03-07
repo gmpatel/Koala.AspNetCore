@@ -9,11 +9,11 @@ namespace Microsoft.AspNetCore
 
         public string AppTitle { get; set; } = "API Server { NetCore }";
 
-        public string AppTag { get; set; } = "Development";
-
-        public string AppSwaggerTitle { get; set; }
-
+        public string AppTag { get; set; } = "Develop";
+        
         public string AppDescription { get; set; }
+
+        public IList<IList<string>> AppApiPageGroups { get; set; }
 
         public int AppPort { get; set; }
 
