@@ -49,6 +49,8 @@ namespace Microsoft.AspNetCore.Extensions
         public static IHostBuilder GetHostBuilder<TStartup>(this ApplicationConfiguration appConfiguration, out ILogger logger, out LoggingLevelSwitch loggingLevelSwitch, out IConfiguration configuration) where TStartup : AbstractStartup
         {
             AbstractStartup.AppConfiguration = appConfiguration;
+            AbstractStartup.AppGuid = appConfiguration.AppIdentifier;
+            KoalaGlobals.AppIdentifier = appConfiguration.AppIdentifier.ToString();
 
             AspNetCoreExtensions.SwaggerPageTitle = !string.IsNullOrWhiteSpace(appConfiguration.AppTag)
                 ? @$"{appConfiguration.AppTitle} - {appConfiguration.AppTag}"
@@ -127,41 +129,36 @@ namespace Microsoft.AspNetCore.Extensions
             MiddlewareConstants.LogApiCallExecuting = appConfiguration.LogApiCallExecuting;
             MiddlewareConstants.LogApiCallExecuted = appConfiguration.LogApiCallExecuted;
 
-            return appConfiguration.AppIdentifier.GetHostBuilder<TStartup>(appConfiguration.AppPort, appConfiguration.AppArgs, out logger, out loggingLevelSwitch, out configuration);
-        }
-
-        public static IHostBuilder GetHostBuilder<TStartup>(this Guid appGuid, int port, string[] args, out ILogger logger, out LoggingLevelSwitch loggingLevelSwitch, out IConfiguration configuration) where TStartup : AbstractStartup
-        {
-            var resolvedConfiguration = appGuid.GetAppConfiguration();
-            var resolvedLogger = appGuid.GetLogger(resolvedConfiguration, out var resolvedLoggingLevelSwitch);
+            var resolvedConfiguration = appConfiguration.AppIdentifier.GetAppConfiguration();
+            var resolvedLogger = appConfiguration.AppIdentifier.GetLogger(resolvedConfiguration, out var resolvedLoggingLevelSwitch, out var resolvedLoggerConfiguration);
 
             configuration = resolvedConfiguration;
             logger = resolvedLogger;
             loggingLevelSwitch = resolvedLoggingLevelSwitch;
-            
-            AbstractStartup.AppGuid = appGuid;
-            KoalaGlobals.AppIdentifier = appGuid.ToString();
 
             AbstractStartup.DefaultLogger = resolvedLogger;
             AbstractStartup.DefaultLoggingLevelSwitch = resolvedLoggingLevelSwitch;
+            AbstractStartup.DefaultLoggerConfiguration = resolvedLoggerConfiguration;
+            
+            var serverPortEnvVarVal = "APP_SERVER_PORT".GetEnvVarValue();
+            var portToBeUsed =
+                !string.IsNullOrWhiteSpace(serverPortEnvVarVal) && Int32.TryParse(serverPortEnvVarVal, out var portNumberFromEnvVar)
+                    ? portNumberFromEnvVar
+                    : appConfiguration.AppPort;
 
-            //if (false)
-            //{
-            //    var targetStartupClassType = typeof(TStartup);
-            //    
-            //    var loggerProp = targetStartupClassType.GetProperty(nameof(ArchiSharpStartup.DefaultLogger), BindingFlags.Public | BindingFlags.Static);
-            //    loggerProp?.SetValue(targetStartupClassType, resolvedLogger, null);
-            //    
-            //    var loggingLevelSwitchProp = targetStartupClassType.GetProperty(nameof(ArchiSharpStartup.DefaultLoggingLevelSwitch), BindingFlags.Public | BindingFlags.Static);
-            //    loggingLevelSwitchProp?.SetValue(targetStartupClassType, resolvedLoggingLevelSwitch, null);
-            //}
+            logger.Information($"APP_ID = '{appConfiguration.AppIdentifier}'");
+            logger.Information($"APP_SERVER_PORT = '{serverPortEnvVarVal}', portUsed = {portToBeUsed}");
+            logger.Information($"LOG_EVENT_LEVEL = '{"LOG_EVENT_LEVEL".GetEnvVarValue()}', loggingLevelSwitch = {loggingLevelSwitch}");
 
-            var webHostBuilder = Host.CreateDefaultBuilder(args)
+            var webHostBuilder = Host.CreateDefaultBuilder(appConfiguration.AppArgs)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                        .UseUrls($"http://*:{port}")
-                        .UseKestrel()
+                        .UseUrls($"http://*:{appConfiguration.AppPort}")
+                        .UseKestrel(options =>
+                        {
+                            options.Limits.MaxRequestBodySize = long.MaxValue;
+                        })
                         .UseConfiguration(resolvedConfiguration)
                         .UseSerilog(resolvedLogger)
                         .UseStartup(typeof(TStartup));
@@ -171,7 +168,7 @@ namespace Microsoft.AspNetCore.Extensions
 
             return webHostBuilder;
         }
-
+        
         public static IServiceCollection ConfigureBasicServices(this IServiceCollection services, IConfiguration configuration, LoggingLevelSwitch loggingLevelSwitch, IList<Assembly> assemblies = null)
         {
             services.AddSingleton(configuration);
