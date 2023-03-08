@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Constants;
-using Microsoft.AspNetCore.Extensions;
 using Koala.Core;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +16,7 @@ namespace Microsoft.AspNetCore.Controllers
         [HttpGet("ServerDescription")]
         public IActionResult GetServerDescription()
         {
-            return Ok($"{AspNetCoreExtensions.SwaggerPageDescription ?? SetConstants.ApiPageV1Description}");
+            return Ok(SetConstants.ApiPageV1Description);
         }
     }
 }

@@ -27,13 +27,7 @@ namespace Microsoft.AspNetCore.Extensions
 {
     public static class AspNetCoreExtensions
     {
-        public static string SwaggerPageTitle { get; set; }
-
-        public static string SwaggerPageDescription { get; set; }
-
-        public static IList<IList<string>> SwaggerDocsGroups { get; set; } = new List<IList<string>> { new List<string> {"Default"} };
-
-        public static string CorsPolicyName { get; set; } = "ArchiSharpAspNetCorsPolicy";
+        public static IList<IList<string>> SwaggerDocsGroups { get; set; } = new List<IList<string>>();
 
         public static string RedisConnectionStringName { get; set; } = "RedisInstance";
 
@@ -46,26 +40,33 @@ namespace Microsoft.AspNetCore.Extensions
             "http://localhost"
         };
 
+        private static string CorsPolicyName { get; set; } = "ArchiSharpAspNetCorsPolicy";
+
         public static IHostBuilder GetHostBuilder<TStartup>(this ApplicationConfiguration appConfiguration, out ILogger logger, out LoggingLevelSwitch loggingLevelSwitch, out IConfiguration configuration) where TStartup : AbstractStartup
         {
             AbstractStartup.AppConfiguration = appConfiguration;
             AbstractStartup.AppGuid = appConfiguration.AppIdentifier;
             KoalaGlobals.AppIdentifier = appConfiguration.AppIdentifier.ToString();
 
-            AspNetCoreExtensions.SwaggerPageTitle = !string.IsNullOrWhiteSpace(appConfiguration.AppTag)
-                ? @$"{appConfiguration.AppTitle} - {appConfiguration.AppTag}"
-                : @$"{appConfiguration.AppTitle}";
+            if (appConfiguration.AppApiPageGroups != null && appConfiguration.AppApiPageGroups.Any())
+            {
+                foreach (var appApiPageGroup in appConfiguration.AppApiPageGroups)
+                {
+                    if (appApiPageGroup != null && appApiPageGroup.Count > 0 && !string.IsNullOrWhiteSpace(appApiPageGroup[0]))
+                    {
+                        AspNetCoreExtensions.SwaggerDocsGroups.Add(appApiPageGroup);
+                    }
+                }
 
-            AspNetCoreExtensions.SwaggerPageDescription = appConfiguration.AppDescription;
+                if (AspNetCoreExtensions.SwaggerDocsGroups.Count <= 0)
+                {
+                    AspNetCoreExtensions.SwaggerDocsGroups.Add(new List<string> { string.Empty.GetVersion() });
+                }
+            }
 
             if (appConfiguration.AppAllowedOrigins != null && appConfiguration.AppAllowedOrigins.Length > 0)
             {
                 AspNetCoreExtensions.AllowedOrigins = appConfiguration.AppAllowedOrigins;
-            }
-
-            if (appConfiguration.AppApiPageGroups != null && appConfiguration.AppApiPageGroups.Any())
-            {
-                AspNetCoreExtensions.SwaggerDocsGroups = appConfiguration.AppApiPageGroups;
             }
 
             foreach (var exceptHiddenControllerName in appConfiguration.AppExceptHiddenControllerNames ?? new List<string>())
@@ -148,7 +149,8 @@ namespace Microsoft.AspNetCore.Extensions
 
             logger.Information($"APP_ID = '{appConfiguration.AppIdentifier}'");
             logger.Information($"APP_SERVER_PORT = '{serverPortEnvVarVal}', portUsed = {portToBeUsed}");
-            logger.Information($"LOG_EVENT_LEVEL = '{"LOG_EVENT_LEVEL".GetEnvVarValue()}', loggingLevelSwitch = {loggingLevelSwitch}");
+            logger.Information($"APP_ENVIRONMENT = '{"APP_ENVIRONMENT".GetEnvVarValue()}'");
+            logger.Information($"LOG_EVENT_LEVEL = '{"LOG_EVENT_LEVEL".GetEnvVarValue()}', loggingLevelSwitch = {loggingLevelSwitch.MinimumLevel}");
 
             var webHostBuilder = Host.CreateDefaultBuilder(appConfiguration.AppArgs)
                 .ConfigureWebHostDefaults(webBuilder =>
@@ -261,7 +263,8 @@ namespace Microsoft.AspNetCore.Extensions
 
                     foreach (var swaggerDocsGroup in SwaggerDocsGroups)
                     {
-                        var groupName = swaggerDocsGroup.FirstOrDefault();
+                        var groupName = swaggerDocsGroup.Count > 0 ? swaggerDocsGroup[0].Trim() : string.Empty;
+                        var groupDescription = swaggerDocsGroup.Count > 1 ? swaggerDocsGroup[1].Trim() : SetConstants.ApiPageV1Description;
 
                         if (string.IsNullOrWhiteSpace(groupName))
                             throw new InvalidDataException("Provided SwaggerDocsGroup configuration is invalid");
@@ -269,8 +272,8 @@ namespace Microsoft.AspNetCore.Extensions
                         c.SwaggerDoc(groupName, new OpenApiInfo
                         {
                             Version = services.GetVersion(),
-                            Title = SwaggerPageTitle ?? groupName,
-                            Description = $"v{new { }.GetVersion()}<br><br>{SwaggerPageDescription ?? SetConstants.ApiPageV1Description}<br><br>{new { }.GetContainerIPsString()}<br>{new { }.GetHostNamesString()}",
+                            Title = GetSwaggerPageTitle(groupName),
+                            Description = $"v{new { }.GetVersion()}<br><br>{groupDescription}<br><br>{new { }.GetContainerIPsString()}<br>{new { }.GetHostNamesString()}",
                             TermsOfService = new Uri(SetConstants.ApiPageTermsLink),
                             Contact = new OpenApiContact
                             {
@@ -435,6 +438,18 @@ namespace Microsoft.AspNetCore.Extensions
             }
 
             return result;
+        }
+
+        private static string GetSwaggerPageTitle(string groupName)
+        {
+            var appTag = "APP_ENVIRONMENT".GetEnvVarValue(null, groupName.IsDebugMode() ? "Debug" : "Release" );
+            return $"{groupName} Service - {appTag}";
+        }
+
+        private static string GetSwaggerPageDescription(string groupName, string groupDescription)
+        {
+            var appTag = "APP_ENVIRONMENT".GetEnvVarValue(null, groupName.IsDebugMode() ? "Debug" : "Release");
+            return $"{groupName} Service - {appTag}";
         }
     }
 }
