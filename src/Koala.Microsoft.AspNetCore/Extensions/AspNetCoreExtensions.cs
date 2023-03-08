@@ -263,8 +263,8 @@ namespace Microsoft.AspNetCore.Extensions
 
                     foreach (var swaggerDocsGroup in SwaggerDocsGroups)
                     {
-                        var groupName = swaggerDocsGroup.Count > 0 ? swaggerDocsGroup[0].Trim() : string.Empty;
-                        var groupDescription = swaggerDocsGroup.Count > 1 ? swaggerDocsGroup[1].Trim() : SetConstants.ApiPageV1Description;
+                        var groupName = swaggerDocsGroup.Count > 0 ? $"{swaggerDocsGroup[0]}".Trim() : string.Empty;
+                        var groupDescription = swaggerDocsGroup.Count > 1 ? $"{swaggerDocsGroup[1]} {SetConstants.ApiPageV1Description}".Trim() : SetConstants.ApiPageV1Description;
 
                         if (string.IsNullOrWhiteSpace(groupName))
                             throw new InvalidDataException("Provided SwaggerDocsGroup configuration is invalid");
@@ -273,7 +273,7 @@ namespace Microsoft.AspNetCore.Extensions
                         {
                             Version = services.GetVersion(),
                             Title = GetSwaggerPageTitle(groupName),
-                            Description = $"v{new { }.GetVersion()}<br><br>{groupDescription}<br><br>{new { }.GetContainerIPsString()}<br>{new { }.GetHostNamesString()}",
+                            Description = $"v{new { }.GetVersion()} [.Net 6.0] [ASP.Net Core]<br><br>{groupDescription}<br><br>{new { }.GetContainerIPsString()}<br>{new { }.GetHostNamesString()}",
                             TermsOfService = new Uri(SetConstants.ApiPageTermsLink),
                             Contact = new OpenApiContact
                             {
