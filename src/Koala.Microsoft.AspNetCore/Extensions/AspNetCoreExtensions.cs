@@ -133,13 +133,15 @@ namespace Microsoft.AspNetCore.Extensions
         public static IHostBuilder GetHostBuilder<TStartup>(this Guid appGuid, int port, string[] args, out ILogger logger, out LoggingLevelSwitch loggingLevelSwitch, out IConfiguration configuration) where TStartup : AbstractStartup
         {
             var resolvedConfiguration = appGuid.GetAppConfiguration();
-            var resolvedLogger = appGuid.GetLogger(out var resolvedLoggingLevelSwitch);
+            var resolvedLogger = appGuid.GetLogger(resolvedConfiguration, out var resolvedLoggingLevelSwitch);
 
             configuration = resolvedConfiguration;
             logger = resolvedLogger;
             loggingLevelSwitch = resolvedLoggingLevelSwitch;
             
             AbstractStartup.AppGuid = appGuid;
+            KoalaGlobals.AppIdentifier = appGuid.ToString();
+
             AbstractStartup.DefaultLogger = resolvedLogger;
             AbstractStartup.DefaultLoggingLevelSwitch = resolvedLoggingLevelSwitch;
 

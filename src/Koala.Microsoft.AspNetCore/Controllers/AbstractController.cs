@@ -67,18 +67,5 @@ namespace Microsoft.AspNetCore.Controllers
 
             throw new HttpStatusException(response.StatusCode, await response.Content.ReadAsStringAsync());
         }
-
-        protected async Task<string> Dump(MemoryStream fileStream, string fileName, bool? addTag = default)
-        {
-            var name = (addTag ?? true) 
-                ? $"{Path.GetFileNameWithoutExtension(fileName)}-{DateTime.Now: yyMMddhhmmssfff}"
-                : $"{Path.GetFileNameWithoutExtension(fileName)}";
-            var ext = $"{Path.GetExtension(fileName)}".ToLower();
-            var dumpFilePath = Path.Combine(fileName.GetDumpDirectory().FullName, $"{name}{ext}");
-
-            await System.IO.File.WriteAllBytesAsync(dumpFilePath, fileStream.ToArray());
-
-            return dumpFilePath;
-        }
     }
 }

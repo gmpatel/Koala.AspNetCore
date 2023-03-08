@@ -33,7 +33,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Koala.Newtonsoft.Json" Version="1.0.10" />
+		<PackageReference Include="Koala.Newtonsoft.Json" Version="1.0.12" />
 
 		<PackageReference Include="Microsoft.AspNetCore.Rewrite" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.3" />
@@ -58,8 +58,7 @@
 		<PackageReference Include="Quartz" Version="3.6.2" />
 
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-		<PackageReference Include="Serilog.ThrowContext" Version="0.1.2" />
-
+		
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
