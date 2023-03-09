@@ -46,7 +46,9 @@ namespace Microsoft.AspNetCore.Extensions
         {
             AbstractStartup.AppConfiguration = appConfiguration;
             AbstractStartup.AppGuid = appConfiguration.AppIdentifier;
+
             KoalaGlobals.AppIdentifier = appConfiguration.AppIdentifier.ToString();
+            KoalaGlobals.AppFilesRoot = appConfiguration.AppFilesRoot == null ? "/tmp" : appConfiguration.AppFilesRoot.FullName;
 
             if (appConfiguration.AppApiPageGroups != null && appConfiguration.AppApiPageGroups.Any())
             {

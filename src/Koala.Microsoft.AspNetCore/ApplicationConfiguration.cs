@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Microsoft.AspNetCore
 {
     public class ApplicationConfiguration
     {
         public Guid AppIdentifier { get; set; }
+
+        public DirectoryInfo AppFilesRoot { get; set; }
 
         public IList<IList<string>> AppApiPageGroups { get; set; }
 
