@@ -156,6 +156,7 @@ namespace Microsoft.AspNetCore.Extensions
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
+                        .UseContentRoot(Directory.GetCurrentDirectory())
                         .UseUrls($"http://*:{appConfiguration.AppPort}")
                         .UseKestrel(options =>
                         {
