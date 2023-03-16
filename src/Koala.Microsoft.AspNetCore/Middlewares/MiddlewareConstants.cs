@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Constants;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
@@ -55,8 +56,7 @@ namespace Microsoft.AspNetCore.Middlewares
         public static string UnauthorizedMessage { get; set; } =
             "Unauthorized to access the resource! Please provide required access information.";
 
-        public static bool DoesRequireXIdHeaderValueFilled(HttpContext httpContext = null,
-            OperationFilterContext operationFilterContext = null)
+        public static bool DoesRequireXIdHeaderValueFilled(HttpContext httpContext = null, OperationFilterContext operationFilterContext = null)
         {
             var relativePath = GetRelativePath(httpContext, operationFilterContext, false);
 
@@ -74,8 +74,7 @@ namespace Microsoft.AspNetCore.Middlewares
             return true;
         }
 
-        public static bool DoesRequireRequestLogging(HttpContext httpContext = null,
-            OperationFilterContext operationFilterContext = null)
+        public static bool DoesRequireRequestLogging(HttpContext httpContext = null, OperationFilterContext operationFilterContext = null)
         {
             var relativePath = GetRelativePath(httpContext, operationFilterContext);
 
@@ -88,8 +87,7 @@ namespace Microsoft.AspNetCore.Middlewares
             return true;
         }
 
-        public static bool DoesRequireAccessTokenHeader(HttpContext httpContext = null,
-            OperationFilterContext operationFilterContext = null)
+        public static bool DoesRequireAccessTokenHeader(HttpContext httpContext = null, OperationFilterContext operationFilterContext = null)
         {
             var relativePath = GetRelativePath(httpContext, operationFilterContext);
 
@@ -111,6 +109,18 @@ namespace Microsoft.AspNetCore.Middlewares
             }
 
             return true;
+        }
+
+        public static bool DoesAuthTokenHasAccess(HttpContext httpContext = null, AuthToken authToken = default, OperationFilterContext operationFilterContext = null)
+        {
+            var relativePath = GetRelativePath(httpContext, operationFilterContext);
+
+            if (!string.IsNullOrWhiteSpace(relativePath) && authToken?.ApiClaims != null && authToken.ApiClaims.Any())
+            {
+                return authToken.ApiClaims.Any(x => relativePath.StartsWith(x, StringComparison.InvariantCultureIgnoreCase));
+            }
+            
+            return false;
         }
 
         public static async Task ResponseUnauthorized(HttpContext context)

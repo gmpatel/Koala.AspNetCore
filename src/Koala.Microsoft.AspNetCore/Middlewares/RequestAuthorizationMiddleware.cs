@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Properties;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
+using Newtonsoft.Json.DataExtensions;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.AspNetCore.Middlewares
 {
@@ -80,7 +85,11 @@ namespace Microsoft.AspNetCore.Middlewares
 
             if (hostInHeader.Count > 0 && authorizationInHeader.Count > 0 && authorizationInHeader[0].StartsWith("Bearer", StringComparison.InvariantCultureIgnoreCase)) // hostInHeader.Any(x => SetConstants.RequestHeaderValuesHost.Contains(x.ToLower())) &&
             {
-                return true;
+                var authTokenBase64 = authorizationInHeader[0].Replace("Bearer", string.Empty);
+                var authTokenJson = authTokenBase64.Base64Decode();
+                var authToken = authTokenJson.Get<AuthToken>();
+                var accessGranted = MiddlewareConstants.DoesAuthTokenHasAccess(httpContext: context, authToken);
+                return accessGranted;
             }
 
             return false;

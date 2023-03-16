@@ -307,6 +307,30 @@ namespace Microsoft.AspNetCore.Extensions
                     c.DocumentFilter<SwaggerPathPrefixFilter>();
                     c.OperationFilter<UploadFileOperationFilter>();
 
+                    if (AbstractStartup.AppConfiguration?.AddBearerTokenSecurityDefinition ?? false)
+                    {
+                        c.AddSecurityDefinition("BearerAuth", new OpenApiSecurityScheme
+                        {
+                            Type = SecuritySchemeType.Http,
+                            Scheme = "bearer",
+                            BearerFormat = "JWT",
+                            Description = "Authorization header using the Bearer scheme"
+                        });
+
+                        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                        {
+                            {
+                                new OpenApiSecurityScheme
+                                {
+                                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "BearerAuth" }
+                                },
+                                AbstractStartup.AppConfiguration?.DefaultBearerSecurityTokenResolver == null
+                                    ? new string[] {}
+                                    : new List<string>{ AbstractStartup.AppConfiguration.DefaultBearerSecurityTokenResolver() }.ToArray()
+                            }
+                        });
+                    }
+
                     if (File.Exists(xmlFilePath))
                     {
                         c.IncludeXmlComments(xmlFilePath);
