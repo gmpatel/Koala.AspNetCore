@@ -117,7 +117,7 @@ namespace Microsoft.AspNetCore.Middlewares
 
             if (!string.IsNullOrWhiteSpace(relativePath) && authToken?.ApiClaims != null && authToken.ApiClaims.Any())
             {
-                return authToken.ApiClaims.Any(x => relativePath.StartsWith(x, StringComparison.InvariantCultureIgnoreCase));
+                return authToken.ApiClaims.Any(x => relativePath.StartsWith(x, StringComparison.InvariantCultureIgnoreCase) || relativePath.StartsWith($"/{x}", StringComparison.InvariantCultureIgnoreCase));
             }
             
             return false;

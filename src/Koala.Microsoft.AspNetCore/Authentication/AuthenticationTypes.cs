@@ -3,7 +3,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Newtonsoft.Json;
 
 namespace Microsoft.AspNetCore.Authentication
@@ -15,7 +14,7 @@ namespace Microsoft.AspNetCore.Authentication
     
     public class AuthToken
     {
-        public AuthTypes? AuthenticationType { get; set; }
+        public AuthTypes? AuthType { get; set; }
 
         public string Email { get; set; }
 
@@ -35,32 +34,49 @@ namespace Microsoft.AspNetCore.Authentication
 
         public IList<string> ApiClaims { get; set; }
 
-        [JsonIgnore]
         public JObject UnderlyingObject { get; set; }
     }
     
     public static class AuthExtensions
     {
-        public static string GetAuthTokenEncrypted(this string oAuthJwtTokenBase64, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        public static string GetUserEmail(this string oAuthJwtTokenBase64)
         {
-            return oAuthJwtTokenBase64.GetAuthToken(claims, appClaims, apiClaims)
+            return oAuthJwtTokenBase64.GetAuthToken().Email;
+        }
+
+        public static string GetAuthTokenEncrypted(this AuthToken authToken)
+        {
+            authToken.UnderlyingObject = null;
+
+            return authToken
                 .Json(compact: true)
                 .Encrypt()
                 .Base64Encode();
         }
 
-        public static string GetAuthTokenBase64(this string oAuthJwtTokenBase64, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        public static string GetAuthTokenBase64(this AuthToken authToken)
         {
-            return oAuthJwtTokenBase64.GetAuthToken(claims, appClaims, apiClaims)
+            authToken.UnderlyingObject = null;
+
+            return authToken
                 .Json(compact: true)
                 .Base64Encode();
+        }
+
+        public static string GetAuthTokenEncrypted(this string oAuthJwtTokenBase64, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        {
+            return oAuthJwtTokenBase64.GetAuthToken(claims, appClaims, apiClaims).GetAuthTokenEncrypted();
+        }
+
+        public static string GetAuthTokenBase64(this string oAuthJwtTokenBase64, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        {
+            return oAuthJwtTokenBase64.GetAuthToken(claims, appClaims, apiClaims).GetAuthTokenBase64();
         }
 
         public static AuthToken GetAuthToken(this string oAuthJwtTokenBase64, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
         {
             var oAuthJwtToken = oAuthJwtTokenBase64
-                .Base64Decode()
-                .Get<JObject>();
+                .Base64Decode().Get<JObject>();
 
             var authenticationType = oAuthJwtToken.GetAuthenticationType();
 
@@ -68,28 +84,29 @@ namespace Microsoft.AspNetCore.Authentication
             {
                 case AuthTypes.Google:
                     {
-                        return oAuthJwtToken.GetAuthenticationTokenForGoogleAuthenticationType(authenticationType);
+                        return oAuthJwtToken.GetAuthTokenForGoogleAuthType(authenticationType, claims, appClaims, apiClaims);
                     }
             }
 
-            return oAuthJwtToken.GetAuthenticationTokenForUnknownAuthenticationType(authenticationType);
+            return oAuthJwtToken.GetAuthTokenForUnknownAuthType(authenticationType, claims, appClaims, apiClaims);
         }
 
         private static AuthTypes? GetAuthenticationType(this JObject data)
         {
-            if (data.TryGetValue("iss", StringComparison.InvariantCultureIgnoreCase, out var issValue) && issValue.Contains("google"))
+            if (data.TryGetValue("iss", StringComparison.InvariantCultureIgnoreCase, out var issValue))
             {
-                return AuthTypes.Google;
+                if (issValue.Json(compact: true).Contains("google"))
+                    return AuthTypes.Google;
             }
 
             return default;
         }
 
-        private static AuthToken GetAuthenticationTokenForGoogleAuthenticationType(this JObject data, AuthTypes? authenticationType, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        private static AuthToken GetAuthTokenForGoogleAuthType(this JObject data, AuthTypes? authType, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
         {
             return new AuthToken
             {
-                AuthenticationType = authenticationType,
+                AuthType = AuthTypes.Google,
                 Email = data.GetProperty<string>("email", string.Empty).Trim().ToLower(),
                 EmailVerified = data.GetProperty<bool?>("email_verified"),
                 FirstName = data.GetProperty<string>("given_name"),
@@ -103,7 +120,7 @@ namespace Microsoft.AspNetCore.Authentication
             };
         }
 
-        private static AuthToken GetAuthenticationTokenForUnknownAuthenticationType(this JObject data, AuthTypes? authenticationType, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        private static AuthToken GetAuthTokenForUnknownAuthType(this JObject data, AuthTypes? authType, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
         {
             if (string.IsNullOrWhiteSpace(data.GetProperty<string>("email")))
             {
@@ -112,8 +129,8 @@ namespace Microsoft.AspNetCore.Authentication
 
             return new AuthToken
             {
-                AuthenticationType = authenticationType,
-                Email = data.GetProperty<string>("email"),
+                AuthType = default,
+                Email = data.GetProperty<string>("email", string.Empty).Trim().ToLower(),
                 EmailVerified = data.GetProperty<bool?>("email_verified"),
                 FirstName = data.GetProperty<string>("given_name"),
                 LastName = data.GetProperty<string>("family_name"),

@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.DataExtensions;
 
 namespace Test.WebApp.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/xyz/[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -18,7 +20,7 @@ namespace Test.WebApp.Controllers
         {
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet(Name = "WeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -28,6 +30,12 @@ namespace Test.WebApp.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpPost(Name = "WeatherForecast")]
+        public IActionResult Post([FromBody] string token)
+        {
+            return Ok(token.GetAuthTokenBase64(new List<string> {"api/xyz"}));
         }
     }
 }
