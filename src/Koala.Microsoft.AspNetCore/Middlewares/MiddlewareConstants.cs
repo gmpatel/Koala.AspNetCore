@@ -90,23 +90,19 @@ namespace Microsoft.AspNetCore.Middlewares
         public static bool DoesRequireAccessTokenHeader(HttpContext httpContext = null, OperationFilterContext operationFilterContext = null)
         {
             var relativePath = GetRelativePath(httpContext, operationFilterContext);
+            var relativePathWithMethod = GetRelativePath(httpContext, operationFilterContext, true);
 
             if (string.IsNullOrWhiteSpace(relativePath))
-            {
                 return false;
-            }
 
-            if (!IncludedPathsInRequestAuthorization.Any(x =>
-                    relativePath.StartsWith(x, StringComparison.InvariantCultureIgnoreCase)))
-            {
+            if (!IncludedPathsInRequestAuthorization.Any(x => relativePath.StartsWith(x, StringComparison.InvariantCultureIgnoreCase)))
                 return false;
-            }
 
-            if (ExemptedPathsFromRequestAuthorization.Any(x =>
-                    relativePath.StartsWith(x, StringComparison.InvariantCultureIgnoreCase)))
-            {
+            if (ExemptedPathsFromRequestAuthorization.Any(x => relativePath.StartsWith(x, StringComparison.InvariantCultureIgnoreCase)))
                 return false;
-            }
+
+            if (ExemptedPathsFromRequestAuthorization.Any(x => relativePathWithMethod.StartsWith(x, StringComparison.InvariantCultureIgnoreCase)))
+                return false;
 
             return true;
         }

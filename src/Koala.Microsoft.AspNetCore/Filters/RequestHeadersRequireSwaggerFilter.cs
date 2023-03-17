@@ -38,7 +38,7 @@ namespace Microsoft.AspNetCore.Filters
                         Example = new OpenApiString(
                             new { }.IsDebugMode()
                                 ? SetConstants.RequestHeaderValueAccessToken
-                                : SetConstants.RequestHeaderValueAccessToken.Substring(0, SetConstants.RequestHeaderValueAccessToken.Length - 3)
+                                : SetConstants.RequestHeaderValueAccessToken.Substring(0, SetConstants.RequestHeaderValueAccessToken.Length - 5)
                         )
                     });
                 }
