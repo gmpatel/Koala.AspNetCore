@@ -14,6 +14,8 @@ namespace Microsoft.AspNetCore.Authentication
     
     public class AuthToken
     {
+        public Guid? Id { get; set; }
+
         public AuthTypes? AuthType { get; set; }
 
         public string Email { get; set; }
@@ -63,17 +65,17 @@ namespace Microsoft.AspNetCore.Authentication
                 .Base64Encode();
         }
 
-        public static string GetAuthTokenEncrypted(this string oAuthJwtTokenBase64, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        public static string GetAuthTokenEncrypted(this string oAuthJwtTokenBase64, Guid? id = default, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
         {
-            return oAuthJwtTokenBase64.GetAuthToken(claims, appClaims, apiClaims).GetAuthTokenEncrypted();
+            return oAuthJwtTokenBase64.GetAuthToken(id, claims, appClaims, apiClaims).GetAuthTokenEncrypted();
         }
 
-        public static string GetAuthTokenBase64(this string oAuthJwtTokenBase64, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        public static string GetAuthTokenBase64(this string oAuthJwtTokenBase64, Guid? id = default, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
         {
-            return oAuthJwtTokenBase64.GetAuthToken(claims, appClaims, apiClaims).GetAuthTokenBase64();
+            return oAuthJwtTokenBase64.GetAuthToken(id, claims, appClaims, apiClaims).GetAuthTokenBase64();
         }
 
-        public static AuthToken GetAuthToken(this string oAuthJwtTokenBase64, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        public static AuthToken GetAuthToken(this string oAuthJwtTokenBase64, Guid? id = default, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
         {
             var oAuthJwtToken = oAuthJwtTokenBase64
                 .Base64Decode().Get<JObject>();
@@ -84,11 +86,11 @@ namespace Microsoft.AspNetCore.Authentication
             {
                 case AuthTypes.Google:
                     {
-                        return oAuthJwtToken.GetAuthTokenForGoogleAuthType(authenticationType, claims, appClaims, apiClaims);
+                        return oAuthJwtToken.GetAuthTokenForGoogleAuthType(authenticationType, id, claims, appClaims, apiClaims);
                     }
             }
 
-            return oAuthJwtToken.GetAuthTokenForUnknownAuthType(authenticationType, claims, appClaims, apiClaims);
+            return oAuthJwtToken.GetAuthTokenForUnknownAuthType(authenticationType, id, claims, appClaims, apiClaims);
         }
 
         private static AuthTypes? GetAuthenticationType(this JObject data)
@@ -102,10 +104,11 @@ namespace Microsoft.AspNetCore.Authentication
             return default;
         }
 
-        private static AuthToken GetAuthTokenForGoogleAuthType(this JObject data, AuthTypes? authType, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        private static AuthToken GetAuthTokenForGoogleAuthType(this JObject data, AuthTypes? authType, Guid? id = default, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
         {
             return new AuthToken
             {
+                Id = id,
                 AuthType = AuthTypes.Google,
                 Email = data.GetProperty<string>("email", string.Empty).Trim().ToLower(),
                 EmailVerified = data.GetProperty<bool?>("email_verified"),
@@ -120,7 +123,7 @@ namespace Microsoft.AspNetCore.Authentication
             };
         }
 
-        private static AuthToken GetAuthTokenForUnknownAuthType(this JObject data, AuthTypes? authType, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
+        private static AuthToken GetAuthTokenForUnknownAuthType(this JObject data, AuthTypes? authType, Guid? id = default, IList<string> claims = default, IList<string> appClaims = default, IList<string> apiClaims = default)
         {
             if (string.IsNullOrWhiteSpace(data.GetProperty<string>("email")))
             {
@@ -129,6 +132,7 @@ namespace Microsoft.AspNetCore.Authentication
 
             return new AuthToken
             {
+                Id = id,
                 AuthType = default,
                 Email = data.GetProperty<string>("email", string.Empty).Trim().ToLower(),
                 EmailVerified = data.GetProperty<bool?>("email_verified"),

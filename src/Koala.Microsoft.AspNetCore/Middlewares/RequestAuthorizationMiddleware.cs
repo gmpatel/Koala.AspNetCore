@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Constants;
@@ -87,6 +90,10 @@ namespace Microsoft.AspNetCore.Middlewares
                 var authTokenJson = authTokenBase64.Base64Decode();
                 var authToken = authTokenJson.Get<AuthToken>();
                 var accessGranted = MiddlewareConstants.DoesAuthTokenHasAccess(httpContext: context, authToken);
+
+                context.User = new GenericPrincipal(new ClaimsIdentity(authToken.Email), authToken.ApiClaims.ToArray());
+                context.Items["ContextUser"] = authToken;
+
                 return accessGranted;
             }
 

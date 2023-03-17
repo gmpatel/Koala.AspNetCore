@@ -35,7 +35,7 @@ namespace Test.WebApp.Controllers
         [HttpPost(Name = "WeatherForecast")]
         public IActionResult Post([FromBody] string token)
         {
-            return Ok(token.GetAuthTokenBase64(new List<string> {"api/xyz"}));
+            return Ok(token.GetAuthTokenBase64(Guid.NewGuid(), new List<string> {"api/xyz"}));
         }
     }
 }
