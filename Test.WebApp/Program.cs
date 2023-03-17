@@ -6,6 +6,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +40,8 @@ namespace Test.WebApp
         public static void Main(string[] args)
         {
             Configuration.AppArgs = args;
+
+            MiddlewareConstants.ExemptedPathsFromRequestAuthorization.Add("GET:/api/xyz/WeatherForecast");
 
             var hostBuilder = Configuration.GetHostBuilder<Startup>(
                 out var logger,
