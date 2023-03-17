@@ -30,11 +30,11 @@ namespace Microsoft.AspNetCore.Authentication
 
         public string PictureLink { get; set; }
 
-        public IList<string> Claims { get; set; }
+        public IList<string> Claims { get; set; } = new List<string>();
 
-        public IList<string> AppClaims { get; set; }
+        public IList<string> AppClaims { get; set; } = new List<string>();
 
-        public IList<string> ApiClaims { get; set; }
+        public IList<string> ApiClaims { get; set; } = new List<string>();
 
         public JObject UnderlyingObject { get; set; }
     }
@@ -116,9 +116,9 @@ namespace Microsoft.AspNetCore.Authentication
                 LastName = data.GetProperty<string>("family_name"),
                 Name = data.GetProperty<string>("name"),
                 PictureLink = data.GetProperty<string>("picture"),
-                Claims = claims,
-                AppClaims = appClaims,
-                ApiClaims = apiClaims,
+                Claims = claims ?? new List<string>(),
+                AppClaims = appClaims ?? new List<string>(),
+                ApiClaims = apiClaims ?? new List<string>(),
                 UnderlyingObject = data
             };
         }
@@ -140,9 +140,9 @@ namespace Microsoft.AspNetCore.Authentication
                 LastName = data.GetProperty<string>("family_name"),
                 Name = data.GetProperty<string>("name"),
                 PictureLink = data.GetProperty<string>("picture"),
-                Claims = claims,
-                AppClaims = appClaims,
-                ApiClaims = apiClaims,
+                Claims = claims ?? new List<string>(),
+                AppClaims = appClaims ?? new List<string>(),
+                ApiClaims = apiClaims ?? new List<string>(),
                 UnderlyingObject = data
             };
         }

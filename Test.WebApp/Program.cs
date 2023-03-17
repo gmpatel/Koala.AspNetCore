@@ -19,7 +19,7 @@ namespace Test.WebApp
     {
         public static readonly ApplicationConfiguration Configuration = new ApplicationConfiguration
         {
-            AppPort = 7070,
+            AppPort = 7060,
             AppIdentifier = new Guid("ee07f2fe-f27e-436f-a223-e4b2312c3834"),
             AppFilesRoot = new DirectoryInfo("/deployments"),
             AppArgs = new string[] { },
