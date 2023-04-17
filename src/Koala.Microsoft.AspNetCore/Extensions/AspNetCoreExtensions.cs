@@ -447,6 +447,7 @@ namespace Microsoft.AspNetCore.Extensions
             var configuration = new ConfigurationBuilder()
                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                     .AddJsonFile("appsettings.json", true)
+                    .AddJsonFile($"appsettings.{GetAppEnvironment()}.json", true)
                     .AddEnvironmentVariables()
                     .Build();
 
@@ -469,14 +470,17 @@ namespace Microsoft.AspNetCore.Extensions
 
         private static string GetSwaggerPageTitle(string groupName)
         {
-            var appTag = "APP_ENVIRONMENT".GetEnvVarValue(null, groupName.IsDebugMode() ? "Debug" : "Release" );
-            return $"{groupName} Service - {appTag}";
+            return $"{groupName} Service - {GetAppEnvironment()}";
         }
 
         private static string GetSwaggerPageDescription(string groupName, string groupDescription)
         {
-            var appTag = "APP_ENVIRONMENT".GetEnvVarValue(null, groupName.IsDebugMode() ? "Debug" : "Release");
-            return $"{groupName} Service - {appTag}";
+            return $"{groupName} Service - {GetAppEnvironment()}";
+        }
+
+        private static string GetAppEnvironment()
+        {
+            return "APP_ENVIRONMENT".GetEnvVarValue(null, new {}.IsDebugMode() ? "Debug" : "Release");
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Test.WebApp
         {
             Configuration.AppArgs = args;
 
-            MiddlewareConstants.ExemptedPathsFromRequestAuthorization.Add("GET:/api/xyz/WeatherForecast");
+           // MiddlewareConstants.ExemptedPathsFromRequestAuthorization.Add("GET:/api/xyz/WeatherForecast");
 
             var hostBuilder = Configuration.GetHostBuilder<Startup>(
                 out var logger,
