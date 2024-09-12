@@ -7,15 +7,15 @@
         public const string ContentTypeHeaderName = "Content-Type";
         public const string ContentTypeHeaderValueJson = "application/json";
 
-        public const string ApiPageTermsLink = "https://archistar.ai/terms";
+        public const string ApiPageTermsLink = "https://gdroid.gleeze.com/terms";
         public const string ApiPageUrlPrefix = "swagger";
         public const string ApiPageV1Title = "API Server";
         public const string ApiPageV1Description = "API Server runs on DotNetCore Light-Weight WebServer Kestrel and the background jobs runs through Quartz HostedJobs on Kestrel. Jobs are still be running with same experience of modes using command-line arguments provided as well as through an API using HTTP request.";
         public const string ApiPageV1Version = "v1";
         public const string ApiPageV1JsonPath = "v1/swagger.json";
-        public const string ApiPageContactName = "Archistar TechTeam";
-        public const string ApiPageContactUrl = "https://archistar.ai";
-        public const string ApiPageContactEmail = "support@archistar.ai";
+        public const string ApiPageContactName = "GDroid TechTeam - Big team of 1 person!";
+        public const string ApiPageContactUrl = "https://gdroid.gleeze.com";
+        public const string ApiPageContactEmail = "gmpat4u@gmail.com";
 
         public const string RequestHeaderNameOrigin = "Origin";
         public const string RequestHeaderNameId = "X-Id";
